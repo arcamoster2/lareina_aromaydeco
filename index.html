@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Reina Aroma y Deco</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Quicksand&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Quicksand', sans-serif;
+      background: url('5160549.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+    }
+
+    header {
+      background-color: rgba(255, 255, 255, 0.85);
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      margin: 0;
+      color: #6b4c3b;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 1rem 2rem;
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    .hero h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #4e3e2a;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero a {
+      text-decoration: none;
+      background-color: #b48b6b;
+      color: white;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+
+    .hero a:hover {
+      background-color: #a17557;
+    }
+
+    .carousel {
+      display: block;
+      overflow: hidden;
+      position: relative;
+      height: 300px;
+      margin-top: 2rem;
+    }
+
+    .carousel-inner {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      height: 300px;
+    }
+
+    .carousel-inner img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .explorar {
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+
+    .explorar h3 {
+      font-size: 1.8rem;
+      color: #6b4c3b;
+      margin-bottom: 2rem;
+    }
+
+    .galeria {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      padding: 0 1rem;
+    }
+
+    .producto {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .producto img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .producto p {
+      padding: 0.5rem;
+      font-size: 1rem;
+      color: #4e3e2a;
+    }
+
+    footer {
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .speaker-btn {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      background: rgba(255, 255, 255, 0.85);
+      border: none;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      cursor: pointer;
+      z-index: 1000;
+      transition: background 0.2s;
+    }
+
+    .speaker-btn:hover {
+      background: #f3e7db;
+    }
+
+    .speaker-btn svg {
+      width: 28px;
+      height: 28px;
+      fill: #6b4c3b;
+    }
+
+    @media (max-width: 600px) {
+      header img {
+        width: 80px !important;
+        height: 80px !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <img src="images/logo.png" alt="Logo La Reina Aroma y Deco" style="width:120px; height:120px; border-radius:50%; margin-bottom:1rem; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+    <h1>La Reina Aroma y Deco</h1>
+  </header>
+
+  <!-- Botón de speaker en la esquina superior derecha -->
+  <button id="playSound" class="speaker-btn" title="Activar sonido de cascada">
+    <svg viewBox="0 0 24 24">
+      <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 0 0-1.5-3.36v6.72A4.5 4.5 0 0 0 16.5 12zm2.5 0c0 2.5-1.5 4.71-3.5 5.65v-2.06c1.2-.73 2-2.07 2-3.59s-.8-2.86-2-3.59V6.35C17.5 7.29 19 9.5 19 12z" />
+    </svg>
+  </button>
+
+  <section class="hero">
+    <h2>Decoración, fragancias y espiritualidad</h2>
+    <p>Descubrí un espacio donde la armonía, el aroma y la naturaleza se unen para transformar tu hogar.</p>
+    <a href="#explorar">Explorar</a>
+  </section>
+
+  <section class="carousel">
+    <div class="carousel-inner"></div>
+  </section>
+
+  <section class="explorar" id="explorar">
+    <h3>Categorías destacadas</h3>
+    <div class="galeria">
+      
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Sucursales: Esquiro 3272, Isidro Casanova | Concordia 3753, La Foresta, Virrey del Pino</p>
+    <p>Instagram y Facebook: @la_reina_aromaydeco | Tel: 1137926615 | Email: lareinadeco7@gmail.com</p>
+  </footer>
+
+  <script>   
+        // Sonido de cascada (ruta actualizada)
+    let audio;
+    document.getElementById('playSound').addEventListener('click', () => {
+      if (!audio) {
+        audio = new Audio('sounds/tibetan.mp3');
+        audio.loop = true;
+      }
+      audio.play();
+    });
+  </script>
+  <!-- Agrega esto antes de </body> en index.html -->
+<script>
+  // Mostrar categorías destacadas desde localStorage
+  function mostrarCategoriasDestacadas() {
+    const galeria = document.querySelector('.galeria');
+    if (!galeria) return;
+    const categorias = JSON.parse(localStorage.getItem('categoriasDestacadas') || '[]');
+    if (categorias.length === 0) {
+      galeria.innerHTML = '<p>No hay categorías destacadas cargadas.</p>';
+      return;
+    }
+    galeria.innerHTML = categorias.map(cat => `
+      <div class="producto">
+        <img src="${cat.foto || ''}" alt="${cat.nombre}">
+        <p>${cat.nombre}</p>
+        <small>${cat.descripcion}</small>
+      </div>
+    `).join('');
+  }
+  mostrarCategoriasDestacadas();
+
+  // Mostrar imágenes del carrusel desde localStorage
+  function mostrarCarousel() {
+    const carouselInner = document.querySelector('.carousel-inner');
+    const imgs = JSON.parse(localStorage.getItem('carouselImgs') || '[]');
+    if (!carouselInner) return;
+    if (imgs.length === 0) {
+      carouselInner.innerHTML = '<img src="5160549.jpg" alt="Imagen por defecto">';
+    } else {
+      carouselInner.innerHTML = imgs.map(img => `<img src="${img}" alt="Imagen carrusel">`).join('');
+    }
+  }
+  mostrarCarousel();
+
+  // Carousel simple automático
+  const carouselInner = document.querySelector('.carousel-inner');
+  let index = 0;
+  setInterval(() => {
+    if (!carouselInner || !carouselInner.children.length) return;
+    index = (index + 1) % carouselInner.children.length;
+    carouselInner.style.transform = `translateX(-${index * 100}%)`;
+  }, 4000);
+</script>
+</body>
+
+</html>
