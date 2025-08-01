@@ -16,6 +16,15 @@
       color: #333;
     }
 
+    /*body {
+      font-family: 'Quicksand', sans-serif;
+      background: url('images/background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }*/
+
     header {
       background-color: rgba(255, 255, 255, 0.85);
       text-align: center;
@@ -93,10 +102,40 @@
     }
 
     .galeria {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
       gap: 1.5rem;
+      justify-content: center;
       padding: 0 1rem;
+    }
+
+    .galeria .producto {
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      width: 220px;
+      min-width: 180px;
+      max-width: 240px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .galeria .producto:hover {
+      box-shadow: 0 4px 16px rgba(180, 139, 107, 0.15);
+      background: #f8f5f2;
+    }
+
+    .galeria .producto img {
+      width: 200px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 8px 8px 0 0;
+      margin-bottom: 0.5rem;
     }
 
     .producto {
@@ -187,9 +226,8 @@
 
   <section class="explorar" id="explorar">
     <h3>Categorías destacadas</h3>
-    <div class="galeria">
-      
-      </div>
+    <div class="galeria"></div>
+    <div id="productos-categoria"></div>
     </div>
   </section>
 
@@ -198,8 +236,8 @@
     <p>Instagram y Facebook: @la_reina_aromaydeco | Tel: 1137926615 | Email: lareinadeco7@gmail.com</p>
   </footer>
 
-  <script>   
-        // Sonido de cascada (ruta actualizada)
+  <script>
+    // Sonido de cascada (ruta actualizada)
     let audio;
     document.getElementById('playSound').addEventListener('click', () => {
       if (!audio) {
@@ -210,48 +248,85 @@
     });
   </script>
   <!-- Agrega esto antes de </body> en index.html -->
-<script>
-  // Mostrar categorías destacadas desde localStorage
-  function mostrarCategoriasDestacadas() {
-    const galeria = document.querySelector('.galeria');
-    if (!galeria) return;
-    const categorias = JSON.parse(localStorage.getItem('categoriasDestacadas') || '[]');
-    if (categorias.length === 0) {
-      galeria.innerHTML = '<p>No hay categorías destacadas cargadas.</p>';
-      return;
-    }
-    galeria.innerHTML = categorias.map(cat => `
-      <div class="producto">
-        <img src="${cat.foto || ''}" alt="${cat.nombre}">
-        <p>${cat.nombre}</p>
-        <small>${cat.descripcion}</small>
-      </div>
-    `).join('');
-  }
-  mostrarCategoriasDestacadas();
+  <script>
+    // Mostrar categorías destacadas desde localStorage
+    // Ejemplo de productos por categoría (puedes administrar esto desde el admin en el futuro)
+    // Estructura: { categoria: [ {nombre, descripcion, foto}, ... ] }
+    const productosPorCategoria = JSON.parse(localStorage.getItem('productosPorCategoria') || '{}');
 
-  // Mostrar imágenes del carrusel desde localStorage
-  function mostrarCarousel() {
+    function mostrarCategoriasDestacadas() {
+      const galeria = document.querySelector('.galeria');
+      if (!galeria) return;
+      const categorias = JSON.parse(localStorage.getItem('categoriasDestacadas') || '[]');
+      if (categorias.length === 0) {
+        galeria.innerHTML = '<p>No hay categorías destacadas cargadas.</p>';
+        return;
+      }
+      galeria.innerHTML = categorias.map((cat, idx) => `
+        <div class="producto" data-categoria="${cat.nombre}">
+          <img src="${cat.foto || 'images/logo.png'}" alt="${cat.nombre}">
+          <p>${cat.nombre}</p>
+          <small>${cat.descripcion}</small>
+        </div>
+      `).join('');
+
+      // Agrega evento click a cada categoría
+      document.querySelectorAll('.galeria .producto').forEach(el => {
+        el.addEventListener('click', function() {
+          mostrarProductosCategoria(this.getAttribute('data-categoria'));
+        });
+      });
+    }
+
+    function mostrarProductosCategoria(nombreCategoria) {
+      const contenedor = document.getElementById('productos-categoria');
+      const productosPorCategoria = JSON.parse(localStorage.getItem('productosPorCategoria') || '{}');
+      const productos = productosPorCategoria[nombreCategoria] || [];
+      if (productos.length === 0) {
+        contenedor.innerHTML = `<h4>${nombreCategoria}</h4><p>No hay productos para esta categoría.</p>`;
+        contenedor.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      contenedor.innerHTML = `
+        <h4>Productos de ${nombreCategoria} <span style="font-size:1rem;color:#b48b6b;">(${productos.length} encontrado${productos.length === 1 ? '' : 's'})</span></h4>
+        <div class="galeria">
+          ${productos.map(prod => `
+            <div class="producto">
+              <img src="${prod.foto || 'images/logo.png'}" alt="${prod.nombre}">
+              <p>${prod.nombre}</p>
+              <small>${prod.descripcion}</small>
+              <p style="font-weight:bold;color:#6b4c3b;">$${prod.precio || '0'}</p>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      contenedor.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    mostrarCategoriasDestacadas();
+
+    // Mostrar imágenes del carrusel desde localStorage
+    function mostrarCarousel() {
+      const carouselInner = document.querySelector('.carousel-inner');
+      const imgs = JSON.parse(localStorage.getItem('carouselImgs') || '[]');
+      if (!carouselInner) return;
+      if (imgs.length === 0) {
+        carouselInner.innerHTML = '<img src="5160549.jpg" alt="Imagen por defecto">';
+      } else {
+        carouselInner.innerHTML = imgs.map(img => `<img src="${img}" alt="Imagen carrusel">`).join('');
+      }
+    }
+    mostrarCarousel();
+
+    // Carousel simple automático
     const carouselInner = document.querySelector('.carousel-inner');
-    const imgs = JSON.parse(localStorage.getItem('carouselImgs') || '[]');
-    if (!carouselInner) return;
-    if (imgs.length === 0) {
-      carouselInner.innerHTML = '<img src="5160549.jpg" alt="Imagen por defecto">';
-    } else {
-      carouselInner.innerHTML = imgs.map(img => `<img src="${img}" alt="Imagen carrusel">`).join('');
-    }
-  }
-  mostrarCarousel();
-
-  // Carousel simple automático
-  const carouselInner = document.querySelector('.carousel-inner');
-  let index = 0;
-  setInterval(() => {
-    if (!carouselInner || !carouselInner.children.length) return;
-    index = (index + 1) % carouselInner.children.length;
-    carouselInner.style.transform = `translateX(-${index * 100}%)`;
-  }, 4000);
-</script>
+    let index = 0;
+    setInterval(() => {
+      if (!carouselInner || !carouselInner.children.length) return;
+      index = (index + 1) % carouselInner.children.length;
+      carouselInner.style.transform = `translateX(-${index * 100}%)`;
+    }, 4000);
+  </script>
 </body>
 
 </html>
