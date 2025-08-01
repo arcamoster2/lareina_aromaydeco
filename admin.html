@@ -13,6 +13,14 @@
       padding: 0;
       color: #333;
     }
+    /*body {
+      font-family: 'Quicksand', sans-serif;
+      background: url('images/background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }*/
     header {
       background: #6b4c3b;
       color: #fff;
@@ -58,7 +66,7 @@
       margin-top: 1rem;
       font-weight: bold;
     }
-    input[type="text"], textarea, input[type="file"] {
+    input[type="text"], textarea, input[type="file"], input[type="number"] {
       width: 100%;
       padding: 0.5rem;
       margin-top: 0.3rem;
@@ -142,7 +150,27 @@
     <!-- Productos por categoría -->
     <section id="seccion-productos" class="hidden">
       <h2>Productos por Categoría</h2>
-      <p>Funcionalidad en desarrollo.</p>
+      <label for="categoriaSelect">Selecciona una categoría</label>
+      <select id="categoriaSelect"></select>
+
+      <form id="formProductoCategoria">
+        <input type="hidden" id="productoCatId">
+        <label for="nombreProd">Nombre del producto</label>
+        <input type="text" id="nombreProd" required>
+
+        <label for="descripcionProd">Descripción</label>
+        <textarea id="descripcionProd" required></textarea>
+
+        <label for="precioProd">Precio ($)</label>
+        <input type="number" id="precioProd" min="0" step="0.01" required>
+
+        <label for="fotoProd">Foto</label>
+        <input type="file" id="fotoProd" accept="image/*">
+
+        <button type="submit">Guardar producto</button>
+      </form>
+
+      <div class="producto-lista" id="listaProductosCategoria"></div>
     </section>
 
     <!-- Carrusel -->
@@ -269,6 +297,121 @@
 
     renderProductos();
 
+    // --- Productos por Categoría ---
+
+    function getProductosPorCategoria() {
+      return JSON.parse(localStorage.getItem('productosPorCategoria') || '{}');
+    }
+    function setProductosPorCategoria(obj) {
+      localStorage.setItem('productosPorCategoria', JSON.stringify(obj));
+    }
+
+    // Actualiza el select de categorías
+    function actualizarSelectCategorias() {
+      const select = document.getElementById('categoriaSelect');
+      const categorias = getProductos();
+      select.innerHTML = categorias.map((cat, idx) =>
+        `<option value="${cat.nombre}">${cat.nombre}</option>`
+      ).join('');
+    }
+
+    // Renderiza los productos de la categoría seleccionada
+    function renderProductosCategoria() {
+      const categoria = document.getElementById('categoriaSelect').value;
+      const lista = document.getElementById('listaProductosCategoria');
+      const productosPorCategoria = getProductosPorCategoria();
+      const productos = productosPorCategoria[categoria] || [];
+      let html = '';
+      if (productos.length === 0) {
+        html = '<p>No hay productos en esta categoría.</p>';
+      } else {
+        html = productos.map((prod, idx) => `
+          <div class="producto-item">
+            <img src="${prod.foto || ''}" alt="${prod.nombre}">
+            <div>
+              <strong>${prod.nombre}</strong>
+              <p>${prod.descripcion}</p>
+              <p><b>Precio:</b> $${prod.precio || '0'}</p>
+              <div class="acciones">
+                <button type="button" onclick="editarProductoCategoria(${idx})">Editar</button>
+                <button type="button" onclick="eliminarProductoCategoria(${idx})">Eliminar</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+      lista.innerHTML = html;
+    }
+
+    // Cuando cambia la categoría seleccionada, muestra sus productos
+    document.getElementById('categoriaSelect').addEventListener('change', renderProductosCategoria);
+
+    // Guardar producto por categoría
+    document.getElementById('formProductoCategoria').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const categoria = document.getElementById('categoriaSelect').value;
+      const nombre = document.getElementById('nombreProd').value.trim();
+      const descripcion = document.getElementById('descripcionProd').value.trim();
+      const precio = document.getElementById('precioProd').value.trim();
+      const fotoInput = document.getElementById('fotoProd');
+      const productoCatId = document.getElementById('productoCatId').value;
+      let productosPorCategoria = getProductosPorCategoria();
+      let productos = productosPorCategoria[categoria] || [];
+
+      function guardar(fotoUrl) {
+        if (productoCatId) {
+          productos[productoCatId] = {
+            nombre,
+            descripcion,
+            precio,
+            foto: fotoUrl || productos[productoCatId].foto
+          };
+        } else {
+          productos.push({ nombre, descripcion, precio, foto: fotoUrl });
+        }
+        productosPorCategoria[categoria] = productos;
+        setProductosPorCategoria(productosPorCategoria);
+        document.getElementById('formProductoCategoria').reset();
+        document.getElementById('productoCatId').value = '';
+        renderProductosCategoria();
+      }
+
+      if (fotoInput.files && fotoInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          guardar(evt.target.result);
+        };
+        reader.readAsDataURL(fotoInput.files[0]);
+      } else {
+        guardar(null);
+      }
+    });
+
+    // Editar producto por categoría
+    window.editarProductoCategoria = function(idx) {
+      const categoria = document.getElementById('categoriaSelect').value;
+      const productos = getProductosPorCategoria()[categoria] || [];
+      const prod = productos[idx];
+      document.getElementById('nombreProd').value = prod.nombre;
+      document.getElementById('descripcionProd').value = prod.descripcion;
+      document.getElementById('precioProd').value = prod.precio || '';
+      document.getElementById('productoCatId').value = idx;
+      // No se puede precargar la imagen por seguridad del navegador
+    };
+
+    // Eliminar producto por categoría
+    window.eliminarProductoCategoria = function(idx) {
+      const categoria = document.getElementById('categoriaSelect').value;
+      let productosPorCategoria = getProductosPorCategoria();
+      let productos = productosPorCategoria[categoria] || [];
+      if (confirm('¿Eliminar este producto?')) {
+        productos.splice(idx, 1);
+        productosPorCategoria[categoria] = productos;
+        setProductosPorCategoria(productosPorCategoria);
+        renderProductosCategoria();
+      }
+    };
+
     // --- Carrusel ---
     function getCarousel() {
       return JSON.parse(localStorage.getItem('carouselImgs') || '[]');
@@ -315,6 +458,22 @@
       renderCarousel();
     };
     renderCarousel();
+
+    // Inicialización al mostrar la sección
+    function inicializarProductosCategoria() {
+      actualizarSelectCategorias();
+      renderProductosCategoria();
+    }
+
+    // Si usas navegación por pestañas, llama a inicializarProductosCategoria() al mostrar la sección de productos
+    // Por ejemplo, en tu función mostrarSeccion:
+    const oldMostrarSeccion = window.mostrarSeccion;
+    window.mostrarSeccion = function(seccion) {
+      oldMostrarSeccion(seccion);
+      if (seccion === 'productos') {
+        inicializarProductosCategoria();
+      }
+    };
   </script>
 </body>
 </html>
